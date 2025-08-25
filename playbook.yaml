@@ -60,7 +60,7 @@
     - name: Run n8n container
       docker_container:
         name: n8n
-        image: docker.n8n.io/n8nio/n8n:latest
+        image: n8nio/n8n
         state: started
         restart_policy: always
         ports:
