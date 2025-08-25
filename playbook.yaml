@@ -1,0 +1,47 @@
+- name: Doprax
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Docker Compose
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: project folder creation
+      file:
+        path: /opt/n8n
+        state: directory
+
+    - name: copy docker-compose.yml
+      copy:
+        dest: /opt/n8n/docker-compose.yml
+        content: |
+          version: '3'
+          services:
+            n8n:
+              image: n8nio/n8n
+              restart: always
+              ports:
+                - "5678:5678"
+              environment:
+                - N8N_BASIC_AUTH_ACTIVE=true
+                - N8N_BASIC_AUTH_USER=admin
+                - N8N_BASIC_AUTH_PASSWORD=admin123
+                - N8N_HOST=localhost
+                - N8N_PORT=5678
+              volumes:
+                - n8n_data:/home/node/.n8n
+          volumes:
+            n8n_data:
+
+    - name: اجرای n8n با Docker Compose
+      command: docker-compose up -d
+      args:
+        chdir: /opt/n8n
